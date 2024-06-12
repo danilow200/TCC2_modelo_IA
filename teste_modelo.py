@@ -12,7 +12,7 @@ encoder = LabelEncoder()
 encoder.classes_ = np.load('classes.npy')
 
 # Abrir o vídeo
-cap = cv2.VideoCapture('./inputs/Libras - Oi.mp4')
+cap = cv2.VideoCapture('./inputs/chute.mp4')
 
 # Dicionário para acompanhar as ocorrências de cada previsão
 predictions = {}
