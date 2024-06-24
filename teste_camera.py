@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import joblib
+from PIL import ImageFont, ImageDraw, Image
 
 # Carregando o modelo
 modelo = joblib.load('modelo.pkl')
@@ -26,6 +27,7 @@ while cap.isOpened():
     
     # Convertendo a cor da imagem
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    image = cv2.flip(image,1)
     
     # Processando a imagem
     result = hands.process(image)
@@ -44,11 +46,23 @@ while cap.isOpened():
             # Desenhando as landmarks na imagem
             mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
             
-            # Adicionando a previsão como uma legenda na imagem
-            cv2.putText(image, f'Previsão: {previsao_frame[0]}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-    
-    # Convertendo a cor da imagem de volta para BGR
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            # Convertendo a imagem do cv2 para PIL
+            pil_image = Image.fromarray(image)
+            
+            # Criando um objeto de desenho
+            draw = ImageDraw.Draw(pil_image)
+            
+            # Escolhendo a fonte e o tamanho
+            font = ImageFont.truetype("arial.ttf", 30)
+            
+            # Desenhando o texto
+            draw.text((10, 30), f'Previsão: {previsao_frame[0]}', font=font, fill=(0, 255, 0, 0))
+            
+        # Convertendo a imagem de volta para cv2
+        image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+
+    else:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     
     # Exibindo a imagem
     cv2.imshow('Video', image)
