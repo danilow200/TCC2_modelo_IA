@@ -68,4 +68,4 @@ coordenadas_media = np.mean(coordenadas, axis=0)
 # Fazendo a previsão para o vídeo completo
 previsao_video = modelo.predict([coordenadas_media])
 
-print(f'O vídeo foi previsto como: {previsao_video[0]}')
+print(f'O vídeo foi previsto como: {previsao_video}')
