@@ -20,6 +20,8 @@ cap = cv2.VideoCapture(0)
 # Lista para armazenar as coordenadas das mãos
 coordenadas = []
 
+anterior = 'Não indentificado'
+
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
@@ -54,9 +56,15 @@ while cap.isOpened():
             
             # Escolhendo a fonte e o tamanho
             font = ImageFont.truetype("arial.ttf", 30)
-            
-            # Desenhando o texto
-            draw.text((10, 30), f'Previsão: {previsao_frame[0]}', font=font, fill=(0, 255, 0, 0))
+
+            if previsao_frame[0] == anterior:
+                # Desenhando o texto
+                draw.text((10, 30), f'Previsão: {previsao_frame[0]}', font=font, fill=(0, 255, 0, 0))
+                mantem = previsao_frame[0]
+            else:
+                draw.text((10, 30), f'Previsão: {anterior}', font=font, fill=(0, 255, 0, 0))
+
+            anterior = previsao_frame[0]
             
         # Convertendo a imagem de volta para cv2
         image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
