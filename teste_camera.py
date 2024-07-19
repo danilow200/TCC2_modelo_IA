@@ -20,7 +20,10 @@ cap = cv2.VideoCapture(0)
 # Lista para armazenar as coordenadas das mãos
 coordenadas = []
 
-anterior = 'Não indentificado'
+anterior = 'Não identificado'
+
+# Perguntando qual é a mão dominante
+mao_dominante = input("Qual é a mão dominante? (direita/esquerda): ").strip().lower()
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -29,15 +32,25 @@ while cap.isOpened():
     
     # Convertendo a cor da imagem
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    image = cv2.flip(image,1)
+    image = cv2.flip(image, 1)
     
     # Processando a imagem
     result = hands.process(image)
     
     if result.multi_hand_landmarks:
-        for hand_landmarks in result.multi_hand_landmarks:
+        for hand_landmarks, handedness in zip(result.multi_hand_landmarks, result.multi_handedness):
             # Extraindo as coordenadas
-            coords = list(np.array([[landmark.x, landmark.y, landmark.z] for landmark in hand_landmarks.landmark]).flatten())
+            coords = np.array([[landmark.x, landmark.y, landmark.z] for landmark in hand_landmarks.landmark]).flatten()
+            
+            # Verificando se a mão detectada é a mão direita ou esquerda
+            if handedness.classification[0].label.lower() == 'right':
+                hand_label = 'direita'
+            else:
+                hand_label = 'esquerda'
+            
+            # Invertendo as coordenadas se a mão dominante for a esquerda e a mão detectada for a direita
+            if mao_dominante == 'esquerda' and hand_label == 'direita':
+                coords = np.array([[1 - landmark.x, landmark.y, landmark.z] for landmark in hand_landmarks.landmark]).flatten()
             
             # Adicionando as coordenadas à lista
             coordenadas.append(coords)
@@ -62,7 +75,7 @@ while cap.isOpened():
                 draw.text((10, 30), f'Previsão: {previsao_frame[0]}', font=font, fill=(0, 255, 0, 0))
                 mantem = previsao_frame[0]
             else:
-                draw.text((10, 30), f'Previsão: {anterior}', font=font, fill=(0, 255, 0, 0))
+                draw.text((10, 30), f'Previsão: {previsao_frame[0]}', font=font, fill=(0, 255, 0, 0))
 
             anterior = previsao_frame[0]
             
