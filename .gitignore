@@ -1,7 +1,9 @@
-inputs/
-pasta/
+inputs
+pasta1
+pasta2
 myenv
 pasta1 - Copia
 pasta2 - Copia
 completo - Copia
 completo
+*.pkl

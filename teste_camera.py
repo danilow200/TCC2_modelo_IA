@@ -24,6 +24,7 @@ mao_dominante = input("Qual é a mão dominante? (direita/esquerda): ").strip().
 
 anterior = 'Não identificado'
 previsoes_ultimos_frames = []
+previsao_mais_comum = anterior  # Inicializa com a previsão anterior
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -88,29 +89,22 @@ while cap.isOpened():
             # Determinar a previsão mais comum entre os últimos 5 frames
             previsao_mais_comum = max(set(previsoes_ultimos_frames), key=previsoes_ultimos_frames.count)
             
-            # Convertendo a imagem do cv2 para PIL
-            pil_image = Image.fromarray(image)
-            
-            # Criando um objeto de desenho
-            draw = ImageDraw.Draw(pil_image)
-            
-            # Escolhendo a fonte e o tamanho
-            font = ImageFont.truetype("arial.ttf", 30)
-            
-            # Desenhando o texto
-            draw.text((10, 30), f'Previsão: {previsao_mais_comum}', font=font, fill=(255, 255, 255, 0))
-
             anterior = previsao_mais_comum
             
-            # Convertendo a imagem de volta para cv2
-            image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
-        else:
-            # Convertendo a imagem de volta para cv2 apenas para exibição
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-    else:
-        # Se nenhuma mão for detectada, converter a imagem de volta para cv2 para exibição
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    # Convertendo a imagem do cv2 para PIL
+    pil_image = Image.fromarray(image)
+    
+    # Criando um objeto de desenho
+    draw = ImageDraw.Draw(pil_image)
+    
+    # Escolhendo a fonte e o tamanho
+    font = ImageFont.truetype("arial.ttf", 30)
+    
+    # Desenhando o texto
+    draw.text((10, 30), f'Previsão: {previsao_mais_comum}', font=font, fill=(255, 255, 255, 0))
+    
+    # Convertendo a imagem de volta para cv2
+    image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
     
     # Exibindo a imagem
     cv2.imshow('Video', image)
